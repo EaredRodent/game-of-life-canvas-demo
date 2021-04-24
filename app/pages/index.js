@@ -57,7 +57,7 @@ export default {
   },
   mounted () {
     this.ctx = this.$refs.canvas.getContext('2d')
-    this.ctx.translate(0.5, 0.5)
+    // this.ctx.translate(-0.5, -0.5)
     this.initCells()
     this.initMouseEvents()
     this.initRender()
@@ -65,12 +65,12 @@ export default {
   methods: {
     drawTable () {
       for (let i = 0; i < this.areaSize / this.cellSize; i++) {
-        const offset = i * this.cellSize - 1
+        const offset = i * this.cellSize - 1 + 0.5
 
-        this.ctx.moveTo(offset, 0)
-        this.ctx.lineTo(offset, 500)
-        this.ctx.moveTo(0, offset)
-        this.ctx.lineTo(500, offset)
+        this.ctx.moveTo(offset, 0.5)
+        this.ctx.lineTo(offset, this.areaSize + 0.5)
+        this.ctx.moveTo(0.5, offset)
+        this.ctx.lineTo(this.areaSize + 0.5, offset)
       }
 
       this.ctx.save()
