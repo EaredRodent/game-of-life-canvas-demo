@@ -65,12 +65,12 @@ export default {
   methods: {
     drawTable () {
       for (let i = 0; i < this.areaSize / this.cellSize; i++) {
-        const offset = i * this.cellSize - 1 + 0.5
+        const offset = i * this.cellSize - 1
 
-        this.ctx.moveTo(offset, 0.5)
-        this.ctx.lineTo(offset, this.areaSize + 0.5)
-        this.ctx.moveTo(0.5, offset)
-        this.ctx.lineTo(this.areaSize + 0.5, offset)
+        this.ctx.moveTo(offset + 0.5, 0)
+        this.ctx.lineTo(offset + 0.5, this.areaSize)
+        this.ctx.moveTo(0, offset + 0.5)
+        this.ctx.lineTo(this.areaSize, offset + 0.5)
       }
 
       this.ctx.save()
