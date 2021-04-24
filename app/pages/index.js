@@ -28,10 +28,6 @@ class Cell {
     }
 
     this.nextState = stateMap[count][Number(this.state)]
-
-    if(this.nextState !== this.state) {
-      console.log(count)
-    }
   }
   draw(ctx) {
     this.state = this.nextState
@@ -94,15 +90,22 @@ export default {
       }
     },
     drawCells() {
+      const cellsForDraw = []
+
       this.rows.forEach((row, rowI) => {
         row.forEach((cell, cellI) => {
           if(this.run) {
             const siblingsCount = this.calcSiblings(rowI, cellI)
+            if(siblingsCount) {
+              console.log(`${rowI} ${cellI} = ${siblingsCount}`)
+            }
             cell.setNextStateBySiblingsCount(siblingsCount)
           }
-          cell.draw(this.ctx)
+          cellsForDraw.push(cell)
         })
       })
+
+      cellsForDraw.forEach(cell => cell.draw(this.ctx))
     },
     initMouseEvents() {
       this.$refs.canvas.addEventListener('click', e => {
@@ -119,15 +122,15 @@ export default {
         this.drawCells()
       }, 1000)
     },
-    calcSiblings(xICenter, yICenter) {
-      const xStart = xICenter - 1
-      const yStart = yICenter - 1
+    calcSiblings(rowI, cellI) {
+      const yStart = rowI - 1
+      const xStart = cellI - 1
 
       let weight = 0
 
       for(let yI = yStart; yI < yStart + 3; yI++) {
         for(let xI = xStart; xI < xStart + 3; xI++) {
-          if(yI !== yICenter && xI !== xICenter) {
+          if(!(yI === rowI && xI === cellI)) {
             weight += Number(this.rows[yI]?.[xI]?.state ?? 0)
           }
         }
