@@ -4,8 +4,8 @@
       <canvas ref="canvas" :width="areaSize" :height="areaSize" />
     </div>
     <div class="x-actions">
-      <v-btn color="primary" @click="run = !run">
-        {{ run ? 'Остановить и редактировать' : 'Старт' }}
+      <v-btn :color="run ? 'error' : 'primary'" @click="run = !run">
+        {{ run ? 'Стоп' : 'Старт' }}
       </v-btn>
     </div>
   </div>

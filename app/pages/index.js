@@ -113,6 +113,7 @@ export default {
         const cellIndex = Math.trunc(e.offsetX / this.cellSize)
         const cell = this.rows[rowIndex][cellIndex]
         cell.setNextState(!cell.state)
+        cell.draw(this.ctx)
       })
     },
     initRender() {
