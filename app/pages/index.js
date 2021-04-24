@@ -98,9 +98,6 @@ export default {
         row.forEach((cell, cellI) => {
           if(this.run) {
             const siblingsCount = this.calcSiblings(rowI, cellI)
-            if(siblingsCount) {
-              console.log(`${rowI} ${cellI} = ${siblingsCount}`)
-            }
             cell.setNextStateBySiblingsCount(siblingsCount)
           }
           cellsForDraw.push(cell)

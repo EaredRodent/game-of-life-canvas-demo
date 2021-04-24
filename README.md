@@ -1,4 +1,4 @@
-####Demo: https://game-of-life-canvas-demo.earedrodent.com
+Demo: https://game-of-life-canvas-demo.earedrodent.com
 
 ## Build Setup
 
