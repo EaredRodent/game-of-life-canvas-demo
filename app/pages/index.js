@@ -120,7 +120,7 @@ export default {
         this.ctx.clearRect(0, 0, this.areaSize, this.areaSize)
         this.drawTable()
         this.drawCells()
-      }, 1000)
+      }, 500)
     },
     calcSiblings(rowI, cellI) {
       const yStart = rowI - 1

@@ -4,8 +4,8 @@
       <canvas ref="canvas" :width="areaSize" :height="areaSize" />
     </div>
     <div class="x-actions">
-      <v-btn @click="run = !run">
-        {{ run ? 'Стоп' : 'Старт' }}
+      <v-btn color="primary" @click="run = !run">
+        {{ run ? 'Остановить и редактировать' : 'Старт' }}
       </v-btn>
     </div>
   </div>
@@ -31,5 +31,8 @@ export { default } from './index.js'
 
   .x-actions {
     flex: 0 0 auto;
+    padding: 10px;
+    display: flex;
+    justify-content: center;
   }
 </style>
