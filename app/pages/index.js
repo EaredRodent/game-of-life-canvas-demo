@@ -44,14 +44,16 @@ export default {
   name: 'Index',
   data () {
     return {
-      ctx: null,
-      areaSize: 500,
-      cellSize: 10,
-      strokeStyle: '#b3b3b3',
-      fillStyle: '#88f',
-      rows: [],
       run: false
     }
+  },
+  beforeCreate () {
+    this.ctx = null
+    this.areaSize = 500
+    this.cellSize = 10
+    this.strokeStyle = '#b3b3b3'
+    this.fillStyle = '#88f'
+    this.rows = []
   },
   mounted () {
     this.ctx = this.$refs.canvas.getContext('2d')
