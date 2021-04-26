@@ -5,14 +5,10 @@ class Cell {
   y = 0
   size = 0
   fillStyle = ''
-  constructor (x, y, size, fillStyle) {
+  constructor (x, y, size) {
     this.x = x
     this.y = y
     this.size = size
-    this.fillStyle = fillStyle
-  }
-  setNextState(state) {
-    this.nextState = state
   }
   setNextStateBySiblingsCount(count) {
     const stateMap = {
@@ -30,12 +26,8 @@ class Cell {
     this.nextState = stateMap[count][Number(this.state)]
   }
   draw(ctx) {
-    this.state = this.nextState
     if(this.state) {
-      ctx.save()
-      ctx.fillStyle = this.fillStyle
-      ctx.fillRect(this.x, this.y, this.size, this.size)
-      ctx.restore()
+      ctx.rect(this.x, this.y, this.size, this.size)
     }
   }
 }
@@ -44,7 +36,9 @@ export default {
   name: 'Index',
   data () {
     return {
-      run: false
+      run: false,
+      cellsUpdateDelay: 500,
+      fps: 0
     }
   },
   beforeCreate () {
@@ -52,12 +46,11 @@ export default {
     this.areaSize = 500
     this.cellSize = 10
     this.strokeStyle = '#b3b3b3'
-    this.fillStyle = '#88f'
+    this.fillStyle = '#000'
     this.rows = []
   },
   mounted () {
     this.ctx = this.$refs.canvas.getContext('2d')
-    // this.ctx.translate(-0.5, -0.5)
     this.initCells()
     this.initMouseEvents()
     this.initRender()
@@ -72,12 +65,6 @@ export default {
         this.ctx.moveTo(0, offset + 0.5)
         this.ctx.lineTo(this.areaSize, offset + 0.5)
       }
-
-      this.ctx.save()
-      this.ctx.strokeStyle = this.strokeStyle
-      this.ctx.lineWidth = 1
-      this.ctx.stroke()
-      this.ctx.restore()
     },
     initCells() {
       const to = this.areaSize / this.cellSize
@@ -91,36 +78,77 @@ export default {
         this.rows.push(row)
       }
     },
-    drawCells() {
-      const cellsForDraw = []
-
-      this.rows.forEach((row, rowI) => {
-        row.forEach((cell, cellI) => {
-          if(this.run) {
-            const siblingsCount = this.calcSiblings(rowI, cellI)
-            cell.setNextStateBySiblingsCount(siblingsCount)
-          }
-          cellsForDraw.push(cell)
+    updateCellsState() {
+      ['setNextState', 'setState'].forEach(workType => {
+        this.rows.forEach((row, rowI) => {
+          row.forEach((cell, cellI) => {
+            if(workType === 'setNextState') {
+              const siblingsCount = this.calcSiblings(rowI, cellI)
+              cell.setNextStateBySiblingsCount(siblingsCount)
+            }
+            if(workType === 'setState') {
+              cell.state = cell.nextState
+            }
+          })
         })
       })
-
-      cellsForDraw.forEach(cell => cell.draw(this.ctx))
     },
     initMouseEvents() {
       this.$refs.canvas.addEventListener('click', e => {
         const rowIndex = Math.trunc(e.offsetY / this.cellSize)
         const cellIndex = Math.trunc(e.offsetX / this.cellSize)
         const cell = this.rows[rowIndex][cellIndex]
-        cell.setNextState(!cell.state)
-        cell.draw(this.ctx)
+        cell.state = !cell.state
       })
     },
     initRender() {
-      setInterval(() => {
+      let cellsStateUpdatedTs = 0
+      let fpsTsStart = Date.now()
+      let fpsCount = 0
+
+
+      const renderWork = () => {
         this.ctx.clearRect(0, 0, this.areaSize, this.areaSize)
+
         this.drawTable()
-        this.drawCells()
-      }, 500)
+
+        const currentTs = Date.now()
+        const fromLastUpdateMs = currentTs - cellsStateUpdatedTs
+
+        if((this.cellsUpdateDelay <= fromLastUpdateMs) && this.run) {
+          this.updateCellsState()
+          cellsStateUpdatedTs = currentTs
+        }
+
+        this.rows.forEach(row => {
+          row.forEach(cell => {
+            if(cell.state) {
+              cell.draw(this.ctx)
+            }
+          })
+        })
+
+        this.ctx.save()
+        this.ctx.strokeStyle = this.strokeStyle
+        this.ctx.lineWidth = 1
+        this.ctx.stroke()
+        this.ctx.fillStyle = this.fillStyle
+        this.ctx.fill()
+        this.ctx.restore()
+        this.ctx.beginPath()
+
+        const fpsTsDiff = currentTs - fpsTsStart
+        fpsCount++
+
+        if(1000 <= fpsTsDiff) {
+          this.fps = fpsCount
+          fpsTsStart = Date.now()
+          fpsCount = 0
+        }
+
+        requestAnimationFrame(renderWork)
+      }
+      renderWork()
     },
     calcSiblings(rowI, cellI) {
       const yStart = rowI - 1
