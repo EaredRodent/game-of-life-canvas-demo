@@ -38,13 +38,13 @@ export default {
     return {
       run: false,
       cellsUpdateDelay: 500,
+      cellSize: 10,
       fps: 0
     }
   },
   beforeCreate () {
     this.ctx = null
     this.areaSize = 500
-    this.cellSize = 10
     this.strokeStyle = '#b3b3b3'
     this.fillStyle = '#000'
     this.rows = []
@@ -54,6 +54,11 @@ export default {
     this.initCells()
     this.initMouseEvents()
     this.initRender()
+  },
+  watch: {
+    cellSize() {
+      this.initCells()
+    }
   },
   methods: {
     drawTable () {
@@ -69,6 +74,8 @@ export default {
     initCells() {
       const to = this.areaSize / this.cellSize
       const cSize = this.cellSize
+
+      this.rows = []
 
       for(let y = 0; y < to; y++) {
         const row = []

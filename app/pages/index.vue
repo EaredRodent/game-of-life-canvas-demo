@@ -16,6 +16,14 @@
         max="1000"
         thumb-label="always"
       />
+      <v-slider
+        v-model="cellSize"
+        :label="`Размер ячейки`"
+        class="x-slider"
+        min="2"
+        max="50"
+        thumb-label="always"
+      />
     </div>
   </div>
 </template>
